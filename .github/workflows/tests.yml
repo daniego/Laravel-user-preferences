@@ -9,10 +9,10 @@ jobs:
         strategy:
             fail-fast: true
             matrix:
-                php: [7.3, 7.4, 8.0]
+                php: [8.0, 8.1]
                 include:
-                    -   laravel: 8.*
-                        testbench: 6.*
+                    -   laravel: 9.*
+                        testbench: 7.*
         steps:
             -   name: Checkout Code
                 uses: actions/checkout@v1
@@ -29,8 +29,10 @@ jobs:
                 run: |
                     composer require "laravel/framework:${{ matrix.laravel }}" "doctrine/dbal" "orchestra/testbench:${{ matrix.testbench }}" --with-all-dependencies --no-interaction --no-update
                     composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest --with-all-dependencies
-            -   name: Composer Autoload
-                run: composer dump-autoload --optimize
+#            -   name: Composer Autoload
+#                # Removing optimize as the github action fails
+#                # run: composer dump-autoload --optimize
+#                run: composer dump-autoload
             -   name: Execute tests
                 run: vendor/bin/testbench package:test
             -   name: Catch Testbench Laravel.log on Fail
